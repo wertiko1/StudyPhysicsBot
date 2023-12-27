@@ -25,6 +25,7 @@ from aiogram.types import (
     Message,
     ReplyKeyboardRemove
 )
+
 # логирование
 logger = logging.getLogger(__name__)
 
@@ -33,13 +34,16 @@ data = Data()
 router = Router()
 gentask = GenTask()
 
-#команды
+
+# команды
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/start", description="Главное меню"),
         BotCommand(command="/cancel", description="Отмена")
     ]
     await bot.set_my_commands(commands)
+
+
 # главное меню
 @router.message(Command(commands=['start']))
 async def cmd_start(msg: Message, state: FSMContext):
@@ -61,11 +65,13 @@ async def cmd_start(msg: Message, state: FSMContext):
                      )
     data.add_user(msg.from_user.id, msg.from_user.username)
 
+
 # команда отмены
 @router.message(Command(commands=['cancel']))
 async def cmd_cancel(msg: Message, state: FSMContext):
     await state.clear()
     await msg.answer("Действие отменено", reply_markup=ReplyKeyboardRemove())
+
 
 # конфигурация запуска
 async def main():
@@ -94,6 +100,7 @@ async def main():
     await set_commands(bot)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
+
 
 # точка входа
 if __name__ == "__main__":

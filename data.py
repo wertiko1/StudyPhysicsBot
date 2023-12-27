@@ -68,7 +68,7 @@ class Data:
         result = self.cursor.execute(f"SELECT * FROM users").fetchall()
         res_user = self.cursor.execute(f"SELECT * FROM users WHERE id={user_id}").fetchall()
         count = 0
-        count_users = len(result)-1
+        count_users = len(result) - 1
         s_user = res_user[0][2] + res_user[0][3] + res_user[0][4] + \
                  res_user[0][5] + res_user[0][6] + res_user[0][7] + res_user[0][8]
         for i in range(len(result)):
