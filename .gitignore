@@ -1,0 +1,7 @@
+# ide files
+venv*
+.idea*
+__pycache__*
+
+# database files
+tasks.db
