@@ -1,7 +1,20 @@
-# ide files
-.venv/
-.idea/
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# database files
-tasks.db
+# Environment variables
+.env
+venv/
+.venv/
+
+# Data
+*.sqlite3
+*.db
+db.sqlite3-wal
+db.sqlite3-shm
+
+# IDE
+.vscode/
+.idea/

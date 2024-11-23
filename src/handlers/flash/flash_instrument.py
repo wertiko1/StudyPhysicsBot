@@ -1,0 +1,39 @@
+from aiogram import Router, F
+from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
+
+from src.keyboards import Keyboard
+from src.utils.states import InstrumentState, MainState
+from src.utils.tasks import InstrumentTaskProvider
+
+router = Router()
+instrument_provider = InstrumentTaskProvider()
+
+
+@router.message(MainState.FLASHCARD, F.text == 'Приборы')
+async def start_flash_instrument(msg: Message, state: FSMContext) -> None:
+    await state.set_state(InstrumentState.BEGIN_FLASH)
+    instrument = instrument_provider.get_random_task()
+    await state.update_data(answer=instrument.answer_label)
+    await msg.answer(
+        text=instrument.instrument,
+        reply_markup=Keyboard.flip()
+    )
+
+
+@router.message(InstrumentState.BEGIN_FLASH, F.text == 'Перевернуть')
+async def send_flash_instrument(msg: Message, state: FSMContext) -> None:
+    answer = await state.get_data()
+    await msg.answer(text=answer['answer'])
+    instrument = instrument_provider.get_random_task()
+    await state.update_data(answer=answer)
+    await msg.answer(text=instrument.instrument)
+
+
+@router.message(InstrumentState.BEGIN_FLASH, F.text == 'Закончить')
+async def finish_flash_instrument(msg: Message, state: FSMContext) -> None:
+    await state.set_state(MainState.FLASHCARD)
+    await msg.answer(
+        'Выберите тему карточек',
+        reply_markup=Keyboard.themes()
+    )

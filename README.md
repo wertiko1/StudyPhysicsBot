@@ -1,2 +1,1 @@
-# Study Bot for Physics
-My first Telegram bot
+# My Study Bot for pass task for Physics
