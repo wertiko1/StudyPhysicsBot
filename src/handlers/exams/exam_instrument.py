@@ -7,9 +7,10 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
+from src.utils import Keyboard
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.states import MainState, InstrumentState
-from src.utils.tasks import InstrumentTaskProvider
+from src.utils.tasks import InstrumentTaskProvider, InstrumentTask
 
 import random
 
@@ -20,22 +21,22 @@ instrument_provider = InstrumentTaskProvider()
 def create_task_keyboard(tasks) -> ReplyKeyboardBuilder:
     builder = ReplyKeyboardBuilder()
     for task in tasks:
-        builder.add(KeyboardButton(text=task.answer_label))
+        builder.add(KeyboardButton(text=task.instrument))
     builder.adjust(3)
     builder.row(KeyboardButton(text="Закончить"))
     return builder
 
 
 @router.message(MainState.EXAM, F.text == "Приборы")
-async def start_exam(msg: Message, state: FSMContext):
+async def start_exam_instrument(msg: Message, state: FSMContext):
     await state.set_state(InstrumentState.BEGIN_EXAM)
 
     tasks = instrument_provider.generate_tasks()
-    answer_task = random.choice(tasks)
+    answer_task: InstrumentTask = random.choice(tasks)
 
     await state.update_data(
         task=answer_task.purpose,
-        answer=answer_task.answer_label,
+        answer=answer_task.instrument,
         count=0,
         count_correct=0,
     )
@@ -48,7 +49,7 @@ async def start_exam(msg: Message, state: FSMContext):
 
 
 @router.message(InstrumentState.BEGIN_EXAM, F.text != "Закончить")
-async def process_exam_answer(msg: Message, state: FSMContext):
+async def process_exam_instrument(msg: Message, state: FSMContext):
     data = await state.get_data()
     user_answer = msg.text
 
@@ -65,11 +66,11 @@ async def process_exam_answer(msg: Message, state: FSMContext):
         await update_task_count(msg.from_user.id, TaskType.INSTRUMENT)
 
     tasks = instrument_provider.generate_tasks()
-    answer_task = random.choice(tasks)
+    answer_task: InstrumentTask = random.choice(tasks)
 
     await state.update_data(
         task=answer_task.purpose,
-        answer=answer_task.answer_label,
+        answer=answer_task.instrument,
         count=count,
         count_correct=count_correct,
     )
@@ -82,7 +83,7 @@ async def process_exam_answer(msg: Message, state: FSMContext):
 
 
 @router.message(InstrumentState.BEGIN_EXAM, F.text == "Закончить")
-async def finish_exam(msg: Message, state: FSMContext):
+async def finish_exam_instrument(msg: Message, state: FSMContext):
     data = await state.get_data()
     await msg.answer(
         text=(
@@ -92,4 +93,11 @@ async def finish_exam(msg: Message, state: FSMContext):
         ),
         reply_markup=ReplyKeyboardRemove(),
     )
-    await state.clear()
+    await state.set_state(MainState.EXAM)
+    await msg.answer(
+        'Тесты по темам\n'
+        ' ● Приборы\n'
+        ' ● Формулы\n'
+        ' ● Ученые',
+        reply_markup=Keyboard.themes()
+    )

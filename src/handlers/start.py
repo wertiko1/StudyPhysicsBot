@@ -1,30 +1,21 @@
 from aiogram import Router, types
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 
-from src.utils import Keyboard
+from src.utils.states import MainState
+from src.utils.db_util import fetch_user, create_new_user
+
+from src.utils import Keyboard, MessageManager
 
 router = Router()
 
 
 @router.message(CommandStart())
-async def start(msg: types.Message):
-    await msg.answer(
-        f"Привет {msg.from_user.username}! 😊"
-    )
-    await msg.answer(
-        "Я рад приветствовать тебя! 📚🌱\n"
-        "Здесь ты найдешь разнообразные задания, формулы,"
-        " которые помогут тебе расширить свои знания! 📝💡\n"
-    )
-    await msg.answer(
-        "Это только первая версия. 🚀\nЕсли у тебя возникнут идеи или предложения "
-        "по улучшению моей работы, "
-        "не стесняйся делиться ими!\n"
-        "Разработчик @wertikomoment"
-    )
-    await msg.answer(
-        "Мои команды:\n"
-        " ● /start - Главное меню\n"
-        " ● /cancel - Отмена действия\n",
-        reply_markup=Keyboard.main()
-    )
+async def start(msg: types.Message, state: FSMContext) -> None:
+    user = await fetch_user(msg.from_user.id)
+    await state.set_state(MainState.START)
+    if not user:
+        await create_new_user(msg.from_user.id)
+        await MessageManager.greeting(msg, Keyboard.main())
+    else:
+        await MessageManager.main(msg, Keyboard.main())

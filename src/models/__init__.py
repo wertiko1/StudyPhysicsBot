@@ -1,4 +1,4 @@
-from .user import User, UserData
+from .user import User
 
 __all__ = (
     'User'

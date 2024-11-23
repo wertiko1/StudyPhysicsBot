@@ -3,7 +3,7 @@ from random import choice, randint
 
 class MathTask:
     def __init__(self, equation: str) -> None:
-        self.equation = equation
+        self.equation = equation.replace('**', '^')
         self.answer = eval(equation)
 
 

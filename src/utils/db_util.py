@@ -3,10 +3,9 @@ from enum import Enum
 from typing import Optional
 
 from tortoise.exceptions import DoesNotExist
-from tortoise.expressions import F
-from tortoise.functions import Sum
 from loguru import logger
-from src.models import User, UserData
+
+from src.models import User
 
 
 @dataclass
@@ -42,10 +41,23 @@ async def fetch_user(user_id: int) -> Optional[User]:
     return user
 
 
-async def create_new_user(user_data: UserData) -> User:
-    logger.debug(f"Creating a new user with ID: {user_data.user_id}")
-    user = await User.create(user_id=user_data.user_id)
-    logger.info(f"User with ID {user_data.user_id} successfully created.")
+async def create_new_user(user_id: int) -> User:
+    logger.debug(f"Creating a new user with ID: {user_id}")
+    user = await User.create(
+        user_id=user_id,
+        max_streak=0,
+        current_streak=0,
+        last_session=None,
+        instrument_tasks=0,
+        theory_tasks=0,
+        formula_tasks=0,
+        math_tasks=0,
+        valid_instrument_tasks=0,
+        valid_theory_tasks=0,
+        valid_formula_tasks=0,
+        valid_math_tasks=0
+    )
+    logger.info(f"User with ID {user_id} successfully created.")
     return user
 
 
@@ -88,40 +100,38 @@ async def get_user_task_percentile(user_id: int) -> Optional[float]:
     logger.debug(f"Calculating task percentile for user ID: {user_id}")
 
     try:
-        user = await User.get(user_id=user_id).annotate(
-            total_tasks=Sum(
-                F("instrument_tasks") +
-                F("valid_instrument_tasks") +
-                F("theory_tasks") +
-                F("valid_theory_tasks") +
-                F("formula_tasks") +
-                F("valid_formula_tasks") +
-                F("math_tasks") +
-                F("valid_math_tasks")
-            )
+        user = await User.get(user_id=user_id)
+
+        user_task_count = (
+                user.instrument_tasks +
+                user.valid_instrument_tasks +
+                user.theory_tasks +
+                user.valid_theory_tasks +
+                user.formula_tasks +
+                user.valid_formula_tasks +
+                user.math_tasks +
+                user.valid_math_tasks
         )
 
-        user_task_count = user.total_tasks
-
-        lower_task_count = await User.annotate(
-            total_tasks=Sum(
-                F("instrument_tasks") +
-                F("valid_instrument_tasks") +
-                F("theory_tasks") +
-                F("valid_theory_tasks") +
-                F("formula_tasks") +
-                F("valid_formula_tasks") +
-                F("math_tasks") +
-                F("valid_math_tasks")
-            )
-        ).filter(total_tasks__lt=user_task_count).count()
-
-        total_users = await User.all().count()
-
-        if total_users == 0:
+        all_users = await User.all()
+        if not all_users:
             logger.warning("No users found in the database.")
             return None
 
+        total_users = len(all_users)
+
+        lower_task_count = sum(
+            1 for u in all_users if (
+                    u.instrument_tasks +
+                    u.valid_instrument_tasks +
+                    u.theory_tasks +
+                    u.valid_theory_tasks +
+                    u.formula_tasks +
+                    u.valid_formula_tasks +
+                    u.math_tasks +
+                    u.valid_math_tasks
+            ) < user_task_count
+        )
         percentile = (lower_task_count / total_users) * 100
         logger.info(f"User ID {user_id} is better than {percentile:.2f}% of users.")
         return percentile

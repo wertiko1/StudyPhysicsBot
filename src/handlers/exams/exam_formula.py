@@ -8,6 +8,8 @@ from aiogram.types import (
     ReplyKeyboardRemove,
     ReplyKeyboardMarkup
 )
+
+from src.utils import Keyboard
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.states import MainState, FormularState
 from src.utils.tasks import FormulaTaskProvider
@@ -99,4 +101,11 @@ async def cancel_exam(msg: Message, state: FSMContext):
         ),
         reply_markup=ReplyKeyboardRemove()
     )
-    await state.clear()
+    await state.set_state(MainState.EXAM)
+    await msg.answer(
+        'Тесты по темам\n'
+        ' ● Приборы\n'
+        ' ● Формулы\n'
+        ' ● Ученые',
+        reply_markup=Keyboard.themes()
+    )

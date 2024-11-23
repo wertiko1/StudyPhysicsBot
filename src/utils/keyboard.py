@@ -31,6 +31,11 @@ class Keyboard:
         return _create(buttons, placeholder='Нажмите для отмены')
 
     @staticmethod
+    def stop() -> ReplyKeyboardMarkup:
+        buttons = [['Закончить']]
+        return _create(buttons, placeholder='Нажмите, чтобы закончить')
+
+    @staticmethod
     def flip() -> ReplyKeyboardMarkup:
         buttons = [['Перевернуть'], ['Закончить']]
         return _create(buttons, placeholder='Выберите действие')
@@ -42,12 +47,3 @@ class Keyboard:
             ['Отмена']
         ]
         return _create(buttons, placeholder='Выберите тему работы')
-
-    @staticmethod
-    def stats() -> ReplyKeyboardMarkup:
-        buttons = [
-            ['Общая статистика'],
-            ['Тесты', 'Карточки', 'Устный счет'],
-            ['Отмена']
-        ]
-        return _create(buttons, placeholder='Выберите действие')

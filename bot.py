@@ -18,6 +18,7 @@ async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     await bot.set_my_commands(
         BotCommands().get_commands_list()
     )
+    await bot.delete_webhook(drop_pending_updates=True)
     logger.info("Startup tasks complete")
 
 
@@ -34,7 +35,7 @@ def main() -> None:
 
     bot_setup = BotSetup(
         token=Config.TOKEN,
-        parse_mode="Markdown",
+        parse_mode="HTML",
         redis_client=db.get_redis_client().get_client(),
         state_ttl=CacheSettings.state_ttl,
         data_ttl=CacheSettings.data_ttl

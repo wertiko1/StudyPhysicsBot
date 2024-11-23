@@ -17,10 +17,10 @@ async def stats(msg: Message) -> None:
     total_exams_valid = user_stats.valid_formula_tasks + user_stats.valid_instrument_tasks + user_stats.valid_theory_tasks
     await msg.answer(
         f"Статистика\n"
-        f"Всего тестов: **{total_exams}**\n"
-        f" ⮩ Правильно: **{total_exams_valid}**\n\n"
-        f"Устный счет: **{user_stats.math_tasks}**\n"
-        f" ⮩ Правильно: **{user_stats.valid_math_tasks}**\n\n"
+        f"Всего тестов: {total_exams}\n"
+        f" ● Правильно: {total_exams_valid}\n\n"
+        f"Устный счет: {user_stats.math_tasks}\n"
+        f" ● Правильно: {user_stats.valid_math_tasks}\n\n"
         f"Это на {int(percent)}% лучше чем у других пользователей",
         reply_markup=Keyboard.main()
     )
