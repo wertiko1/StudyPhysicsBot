@@ -4,7 +4,7 @@ from aiogram.types import Message
 from src.utils.states import MainState, MathState
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.tasks import MathTaskProvider
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 
 router = Router()
 math_provider = MathTaskProvider()

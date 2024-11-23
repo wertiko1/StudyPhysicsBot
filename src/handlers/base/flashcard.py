@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from src.utils.states import MainState
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 
 router = Router()
 
@@ -36,7 +36,6 @@ async def flash_cancel(msg: Message, state: FSMContext):
     await msg.answer(
         "Мои команды:\n"
         " ● /start - Главное меню\n"
-        " ● /cancel - Отмена действия\n"
-        "P.S. команду /cancel использовать в любой непонятной ситуации",
+        " ● /cancel - Отмена действия\n",
         reply_markup=Keyboard.themes()
     )

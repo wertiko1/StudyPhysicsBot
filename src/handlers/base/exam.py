@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from src.utils.states import MainState
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 
 router = Router()
 

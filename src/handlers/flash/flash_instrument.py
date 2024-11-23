@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 from src.utils.states import InstrumentState, MainState
 from src.utils.tasks import InstrumentTaskProvider
 

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile
 
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 from src.utils.states import FormularState, MainState
 from src.utils.tasks import FormulaTaskProvider
 

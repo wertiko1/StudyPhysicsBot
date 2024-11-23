@@ -1,6 +1,6 @@
 from aiogram import Router, F
 
-from src.keyboards import Keyboard
+from src.utils import Keyboard
 from src.utils.db_util import get_user_task_percentile, fetch_task_stats
 from src.utils.states import MainState
 
