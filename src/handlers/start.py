@@ -7,7 +7,7 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_cancel(msg: types.Message):
+async def start(msg: types.Message):
     await msg.answer(
         f"Привет {msg.from_user.username}! 😊"
     )

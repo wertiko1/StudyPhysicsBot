@@ -75,6 +75,6 @@ async def send_math_task(msg: Message, state: FSMContext) -> None:
 
 
 @router.message(MathState.RECURSION, F.text == "Закончить")
-async def cmd_cancel(msg: Message, state: FSMContext) -> None:
+async def math_cancel(msg: Message, state: FSMContext) -> None:
     await state.set_state(MainState.START)
     await send_greeting(msg)

@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.message(MainState.START, F.text == 'Карточки')
-async def cmd_physic(msg: Message, state: FSMContext):
+async def main_flash_command(msg: Message, state: FSMContext):
     await state.set_state(MainState.FLASHCARD)
     await msg.answer(
         'Выберите тему карточек',
@@ -18,7 +18,7 @@ async def cmd_physic(msg: Message, state: FSMContext):
 
 
 @router.message(MainState.FLASHCARD, F.text == 'Отмена')
-async def cancel(msg: Message, state: FSMContext):
+async def flash_cancel(msg: Message, state: FSMContext):
     await state.set_state(MainState.START)
     await msg.answer(
         f"Привет {msg.from_user.username}! 😊"

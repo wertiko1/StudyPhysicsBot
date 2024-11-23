@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.message(MainState.START, F.text == 'Тесты')
-async def main_exam(msg: Message, state: FSMContext):
+async def main_exam_command(msg: Message, state: FSMContext):
     await state.set_state(MainState.EXAM)
     await msg.answer(
         'Тесты по темам\n'
@@ -21,7 +21,7 @@ async def main_exam(msg: Message, state: FSMContext):
 
 
 @router.message(MainState.EXAM, F.text == 'Отмена')
-async def cmd_cancel(msg: Message, state: FSMContext):
+async def exam_cancel(msg: Message, state: FSMContext):
     await state.set_state(MainState.START)
     await msg.answer(
         f"Привет {msg.from_user.username}! 😊"
