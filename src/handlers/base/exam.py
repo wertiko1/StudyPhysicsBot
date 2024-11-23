@@ -1,13 +1,28 @@
-from aiogram import Router, types
-from aiogram.filters import CommandStart
+from aiogram import Router, F
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
+from src.utils.states import MainState
 from src.keyboards import Keyboard
 
 router = Router()
 
 
-@router.message(CommandStart())
-async def cmd_cancel(msg: types.Message):
+@router.message(MainState.START, F.text == 'Тесты')
+async def main_exam(msg: Message, state: FSMContext):
+    await state.set_state(MainState.EXAM)
+    await msg.answer(
+        'Тесты по темам\n'
+        ' 🢡 Приборы\n'
+        ' 🢡 Формулы\n'
+        ' 🢡 Ученые',
+        reply_markup=Keyboard.themes()
+    )
+
+
+@router.message(MainState.EXAM, F.text == 'Отмена')
+async def cmd_cancel(msg: Message, state: FSMContext):
+    await state.set_state(MainState.START)
     await msg.answer(
         f"Привет {msg.from_user.username}! 😊"
     )
@@ -19,12 +34,11 @@ async def cmd_cancel(msg: types.Message):
     await msg.answer(
         "Это только первая версия. 🚀\nЕсли у тебя возникнут идеи или предложения "
         "по улучшению моей работы, "
-        "не стесняйся делиться ими!\n"
-        "Разработчик @wertikomoment"
+        "не стесняйся делиться ими!\nРазработчик @wertikomoment"
     )
     await msg.answer(
         "Мои команды:\n"
         " ● /start - Главное меню\n"
         " ● /cancel - Отмена действия\n",
-        reply_markup=Keyboard.main()
+        reply_markup=Keyboard.themes()
     )

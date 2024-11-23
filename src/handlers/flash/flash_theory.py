@@ -15,22 +15,33 @@ async def start_flash_theory(msg: Message, state: FSMContext) -> None:
     await state.set_state(TheoryState.BEGIN_FLASH)
     task = theory_provider.get_random_task()
     await state.update_data(author=task.description)
-    await msg.answer(text=task.theory, reply_markup=Keyboard.flip())
+
+    await msg.answer(
+        text=task.theory,
+        reply_markup=Keyboard.flip()
+    )
 
 
 @router.message(TheoryState.BEGIN_FLASH, F.text == 'Перевернуть')
 async def send_flash_theory(msg: Message, state: FSMContext) -> None:
-    author = await state.get_data()
-    await msg.answer(text=author['author'])
+    data = await state.get_data()
+    current_author = data.get('author')
+
+    await msg.answer(text=current_author)
     task = theory_provider.get_random_task()
     await state.update_data(author=task.description)
-    await msg.answer(text=task.theory)
+
+    await msg.answer(
+        text=task.theory,
+        reply_markup=Keyboard.flip()
+    )
 
 
 @router.message(TheoryState.BEGIN_FLASH, F.text == 'Закончить')
 async def finish_flash_theory(msg: Message, state: FSMContext) -> None:
     await state.set_state(MainState.FLASHCARD)
+
     await msg.answer(
-        'Выберите тему карточек',
+        "Выберите тему карточек:",
         reply_markup=Keyboard.themes()
     )

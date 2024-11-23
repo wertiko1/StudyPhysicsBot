@@ -1,98 +1,95 @@
 from aiogram import Router, F
-from func import GenTask
-from states import FormPhysicExam
-from states import FormStartMenu
 from aiogram.fsm.context import FSMContext
-from db import Data
-import random as rn
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.types import (
     Message,
     KeyboardButton,
     ReplyKeyboardRemove
 )
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+
+from src.utils.db_util import TaskType, update_task_count
+from src.utils.states import MainState, InstrumentState
+from src.utils.tasks import InstrumentTaskProvider
+
+import random
 
 router = Router()
+instrument_provider = InstrumentTaskProvider()
 
 
-@router.message(FormStartMenu.exam_physic, F.text == 'Приборы')
-async def cmd_exam_form(msg: Message, state: FSMContext):
-    await state.set_state(FormPhysicExam.begin_device)
+def create_task_keyboard(tasks) -> ReplyKeyboardBuilder:
     builder = ReplyKeyboardBuilder()
-    result = gentask.gen_device()
-    lst = []
-    for i in range(3):
-        lst.append(result[i][1])
-        builder.add(KeyboardButton(text=result[i][1]))
+    for task in tasks:
+        builder.add(KeyboardButton(text=task.answer_label))
     builder.adjust(3)
-    builder.row(KeyboardButton(text='Закончить'))
-    answer, count, count_p = rn.choice(lst), 0, 0
-    for i in range(3):
-        if result[i][1] == answer:
-            task = result[i][0]
-            break
-    await state.update_data(task=task, answer=answer, count=count, count_p=count_p)
-    await msg.answer(text=f"Какой прибор измеряет:\n ● {task}", reply_markup=builder.as_markup(resize_keyboard=True))
+    builder.row(KeyboardButton(text="Закончить"))
+    return builder
 
 
-@router.message(FormPhysicExam.begin_device, F.text != 'Закончить')
-async def rout_task(msg: Message, state: FSMContext):
-    results = await state.get_data()
-    if msg.text == results['answer']:
-        await msg.answer('Правильно')
-        data.add_stats(msg.from_user.id, 'device_exam')
-        data.add_stats(msg.from_user.id, 'task2')
-        c = results['count']
-        c += 1
-        cp = results['count_p']
-        cp += 1
-        builder = ReplyKeyboardBuilder()
-        result = gentask.gen_device()
-        lst = []
-        for i in range(3):
-            lst.append(result[i][1])
-            builder.add(KeyboardButton(text=result[i][1]))
-        builder.adjust(3)
-        builder.row(KeyboardButton(text='Закончить'))
-        answer, count, count_p = rn.choice(lst), 0, 0
-        for i in range(3):
-            if result[i][1] == answer:
-                task = result[i][0]
-                break
-        await state.update_data(task=task, answer=answer, count=c, count_p=cp)
-        await msg.answer(text=f"Какой прибор измеряет:\n ● {task}",
-                         reply_markup=builder.as_markup(resize_keyboard=True))
+@router.message(MainState.EXAM, F.text == "Приборы")
+async def start_exam(msg: Message, state: FSMContext):
+    await state.set_state(InstrumentState.BEGIN_EXAM)
+
+    tasks = instrument_provider.generate_tasks()
+    answer_task = random.choice(tasks)
+
+    await state.update_data(
+        task=answer_task.purpose,
+        answer=answer_task.answer_label,
+        count=0,
+        count_correct=0,
+    )
+
+    keyboard = create_task_keyboard(tasks)
+    await msg.answer(
+        text=f"Какой прибор используется для:\n ● {answer_task.purpose}",
+        reply_markup=keyboard.as_markup(resize_keyboard=True),
+    )
+
+
+@router.message(InstrumentState.BEGIN_EXAM, F.text != "Закончить")
+async def process_exam_answer(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    user_answer = msg.text
+
+    count = data.get("count") + 1
+    count_correct = data.get("count_correct")
+
+    if user_answer == data.get("answer"):
+        await msg.answer("Правильно! ✅")
+        count_correct += 1
+        await update_task_count(msg.from_user.id, TaskType.INSTRUMENT)
+        await update_task_count(msg.from_user.id, TaskType.VALID_INSTRUMENT)
     else:
-        await msg.answer('Неправильно')
-        data.add_stats(msg.from_user.id, 'device_exam')
-        c = results['count']
-        c += 1
-        cp = results['count_p']
-        builder = ReplyKeyboardBuilder()
-        result = gentask.gen_device()
-        lst = []
-        for i in range(3):
-            lst.append(result[i][1])
-            builder.add(KeyboardButton(text=result[i][1]))
-        builder.adjust(3)
-        builder.row(KeyboardButton(text='Закончить'))
-        answer, count, count_p = rn.choice(lst), 0, 0
-        for i in range(3):
-            if result[i][1] == answer:
-                task = result[i][0]
-                break
-        await state.update_data(task=task, answer=answer, count=c, count_p=cp)
-        await msg.answer(text=f"Какой прибор изменяет:\n ● {task}",
-                         reply_markup=builder.as_markup(resize_keyboard=True))
+        await msg.answer("Неправильно. ❌")
+        await update_task_count(msg.from_user.id, TaskType.INSTRUMENT)
+
+    tasks = instrument_provider.generate_tasks()
+    answer_task = random.choice(tasks)
+
+    await state.update_data(
+        task=answer_task.purpose,
+        answer=answer_task.answer_label,
+        count=count,
+        count_correct=count_correct,
+    )
+
+    keyboard = create_task_keyboard(tasks)
+    await msg.answer(
+        text=f"Какой прибор используется для:\n ● {answer_task.purpose}",
+        reply_markup=keyboard.as_markup(resize_keyboard=True),
+    )
 
 
-@router.message(FormPhysicExam.begin_device, F.text == 'Закончить')
-async def cmd_cancel(msg: Message, state: FSMContext):
-    result = await state.get_data()
-    await msg.answer(f"Тест завершен\n"
-                     f"Всего: {result['count']}\n"
-                     f"Правильно: {result['count_p']}\n"
-                     "Главное меню /start",
-                     reply_markup=ReplyKeyboardRemove()
-                     )
+@router.message(InstrumentState.BEGIN_EXAM, F.text == "Закончить")
+async def finish_exam(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    await msg.answer(
+        text=(
+            f"Тест завершён ✅\n"
+            f"Всего вопросов: {data.get('count')}\n"
+            f"Правильных ответов: {data.get('count_correct')}\n"
+        ),
+        reply_markup=ReplyKeyboardRemove(),
+    )
     await state.clear()

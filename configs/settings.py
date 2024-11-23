@@ -5,5 +5,6 @@ class CacheSettings:
 
 
 class Messages:
+    GREETING = ""
     START = ""
     ABOUT = ""

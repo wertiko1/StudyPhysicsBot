@@ -15,6 +15,7 @@ async def start_flash_instrument(msg: Message, state: FSMContext) -> None:
     await state.set_state(InstrumentState.BEGIN_FLASH)
     instrument = instrument_provider.get_random_task()
     await state.update_data(answer=instrument.answer_label)
+
     await msg.answer(
         text=instrument.instrument,
         reply_markup=Keyboard.flip()
@@ -23,17 +24,25 @@ async def start_flash_instrument(msg: Message, state: FSMContext) -> None:
 
 @router.message(InstrumentState.BEGIN_FLASH, F.text == 'Перевернуть')
 async def send_flash_instrument(msg: Message, state: FSMContext) -> None:
-    answer = await state.get_data()
-    await msg.answer(text=answer['answer'])
+    data = await state.get_data()
+    current_answer = data.get('answer')
+
+    if current_answer:
+        await msg.answer(text=current_answer)
     instrument = instrument_provider.get_random_task()
-    await state.update_data(answer=answer)
-    await msg.answer(text=instrument.instrument)
+    await state.update_data(answer=instrument.answer_label)
+
+    await msg.answer(
+        text=instrument.instrument,
+        reply_markup=Keyboard.flip()
+    )
 
 
 @router.message(InstrumentState.BEGIN_FLASH, F.text == 'Закончить')
 async def finish_flash_instrument(msg: Message, state: FSMContext) -> None:
     await state.set_state(MainState.FLASHCARD)
+
     await msg.answer(
-        'Выберите тему карточек',
+        'Выберите тему карточек:',
         reply_markup=Keyboard.themes()
     )
