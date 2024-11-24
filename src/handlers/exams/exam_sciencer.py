@@ -7,16 +7,15 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from src.handlers.flash.flash_theory import theory_provider
 from src.utils import Keyboard
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.states import MainState, TheoryState
-from src.utils.tasks import TheoryTaskProvider, TheoryTask
+from src.utils.tasks import SciencerTaskProvider, SciencerTask
 
 import random
 
 router = Router()
-theory_provider = TheoryTaskProvider()
+sciencer_provider = SciencerTaskProvider()
 
 
 def create_task_keyboard(tasks) -> ReplyKeyboardBuilder:
@@ -32,11 +31,11 @@ def create_task_keyboard(tasks) -> ReplyKeyboardBuilder:
 async def start_exam_theory(msg: Message, state: FSMContext):
     await state.set_state(TheoryState.BEGIN_EXAM)
 
-    tasks = theory_provider.generate_tasks()
-    answer_task: TheoryTask = random.choice(tasks)
+    tasks = sciencer_provider.generate_tasks()
+    answer_task: SciencerTask = random.choice(tasks)
 
     await state.update_data(
-        task=answer_task.theory,
+        task=answer_task.sciencer,
         answer=answer_task.description,
         count=0,
         count_correct=0,
@@ -44,7 +43,7 @@ async def start_exam_theory(msg: Message, state: FSMContext):
 
     keyboard = create_task_keyboard(tasks)
     await msg.answer(
-        text=f"Какой ученый открыл:\n ● {answer_task.theory}",
+        text=f"Какой ученый открыл:\n ● {answer_task.sciencer}",
         reply_markup=keyboard.as_markup(resize_keyboard=True),
     )
 
@@ -66,11 +65,11 @@ async def process_exam_theory(msg: Message, state: FSMContext):
     else:
         await msg.answer("Неправильно. ❌")
 
-    tasks = theory_provider.generate_tasks()
-    answer_task: TheoryTask = random.choice(tasks)
+    tasks = sciencer_provider.generate_tasks()
+    answer_task: SciencerTask = random.choice(tasks)
 
     await state.update_data(
-        task=answer_task.theory,
+        task=answer_task.sciencer,
         answer=answer_task.description,
         count=count,
         count_correct=count_correct,
@@ -78,7 +77,7 @@ async def process_exam_theory(msg: Message, state: FSMContext):
 
     keyboard = create_task_keyboard(tasks)
     await msg.answer(
-        text=f"Какой ученый открыл:\n ● {answer_task.theory}",
+        text=f"Какой ученый открыл:\n ● {answer_task.sciencer}",
         reply_markup=keyboard.as_markup(resize_keyboard=True),
     )
 

@@ -16,7 +16,7 @@ from src.utils.tasks import FormulaTaskProvider
 import random
 
 router = Router()
-task_provider = FormulaTaskProvider()
+formula_provider = FormulaTaskProvider()
 
 
 def create_task_keyboard(tasks) -> ReplyKeyboardMarkup:
@@ -38,10 +38,10 @@ async def send_task_with_images(msg: Message, tasks):
 async def start_exam_formula(msg: Message, state: FSMContext):
     await state.set_state(FormularState.BEGIN_EXAM)
 
-    tasks = task_provider.generate_tasks()
-    await send_task_with_images(msg, tasks)
+    formula_tasks = formula_provider.generate_tasks()
+    await send_task_with_images(msg, formula_tasks)
 
-    answer_task = random.choice(tasks)
+    answer_task = random.choice(formula_tasks)
     await state.update_data(
         task=answer_task.description,
         answer=answer_task.answer_label,
@@ -49,7 +49,7 @@ async def start_exam_formula(msg: Message, state: FSMContext):
         count_valid=0
     )
 
-    keyboard = create_task_keyboard(tasks)
+    keyboard = create_task_keyboard(formula_tasks)
     await msg.answer(
         text=f"Какая формула находит:\n ● {answer_task.description}",
         reply_markup=keyboard
@@ -72,10 +72,10 @@ async def process_exam_response(msg: Message, state: FSMContext):
 
     results['count'] += 1
 
-    tasks = task_provider.generate_tasks()
-    await send_task_with_images(msg, tasks)
+    formula_tasks = formula_provider.generate_tasks()
+    await send_task_with_images(msg, formula_tasks)
 
-    answer_task = random.choice(tasks)
+    answer_task = random.choice(formula_tasks)
     await state.update_data(
         task=answer_task.description,
         answer=answer_task.answer_label,
@@ -83,7 +83,7 @@ async def process_exam_response(msg: Message, state: FSMContext):
         count_valid=results.get('count_valid')
     )
 
-    keyboard = create_task_keyboard(tasks)
+    keyboard = create_task_keyboard(formula_tasks)
     await msg.answer(
         text=f"Какая формула находит:\n ● {answer_task.description}",
         reply_markup=keyboard

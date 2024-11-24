@@ -15,9 +15,7 @@ async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     await db.get_db_client().startup()
     await db.get_redis_client().get_client()
     RoutersLoader(routers_path='src/handlers', dp=dispatcher).load()
-    await bot.set_my_commands(
-        BotCommands().get_commands_list()
-    )
+    await bot.set_my_commands(BotCommands().get_commands_list())
     await bot.delete_webhook(drop_pending_updates=True)
     logger.info("Startup tasks complete")
 

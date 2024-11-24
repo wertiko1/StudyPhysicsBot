@@ -13,11 +13,11 @@ formula_provider = FormulaTaskProvider()
 @router.message(MainState.FLASHCARD, F.text == 'Формулы')
 async def start_flash_formulas(msg: Message, state: FSMContext) -> None:
     await state.set_state(FormularState.BEGIN_FLASH)
-    filename, task = formula_provider.get_random_task()
-    await state.update_data(task=task)
+    formula_task = formula_provider.get_random_task()
+    await state.update_data(task=formula_task.description)
 
     await msg.answer(
-        text=task,
+        text=formula_task.description,
         reply_markup=Keyboard.flip()
     )
 
@@ -29,24 +29,23 @@ async def send_flash_formulas(msg: Message, state: FSMContext) -> None:
 
     formula_task = formula_provider.get_formula_task(current_task)
 
-    if formula_task:
-        formula_photo = FSInputFile(
-            f"./assets/formulas/{formula_task.formula_image}",
-            filename=formula_task.formula_image[:-4]
-        )
-        await msg.answer_photo(photo=formula_photo)
+    formula_photo = FSInputFile(
+        f"./assets/formulas/{formula_task.formula_image}",
+        filename=formula_task.formula_image[:-4]
+    )
+    await msg.answer_photo(photo=formula_photo)
 
-        elements_photo = FSInputFile(
-            f"./assets/formulas/{formula_task.elements_image}",
-            filename=formula_task.elements_image[:-4]
-        )
-        await msg.answer_photo(photo=elements_photo)
+    elements_photo = FSInputFile(
+        f"./assets/formulas/{formula_task.elements_image}",
+        filename=formula_task.elements_image[:-4]
+    )
+    await msg.answer_photo(photo=elements_photo)
 
-    filename, new_task = formula_provider.get_random_task()
-    await state.update_data(task=new_task)
+    formula_task = formula_provider.get_random_task()
+    await state.update_data(task=formula_task.description)
 
     await msg.answer(
-        text=new_task,
+        text=formula_task.description,
         reply_markup=Keyboard.flip()
     )
 

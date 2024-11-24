@@ -13,11 +13,11 @@ instrument_provider = InstrumentTaskProvider()
 @router.message(MainState.FLASHCARD, F.text == 'Приборы')
 async def start_flash_instrument(msg: Message, state: FSMContext) -> None:
     await state.set_state(InstrumentState.BEGIN_FLASH)
-    instrument = instrument_provider.get_random_task()
-    await state.update_data(answer=instrument.answer_label)
+    instrument_task = instrument_provider.get_random_task()
+    await state.update_data(answer=instrument_task.instrument)
 
     await msg.answer(
-        text=instrument.instrument,
+        text=instrument_task.purpose,
         reply_markup=Keyboard.flip()
     )
 
@@ -29,11 +29,11 @@ async def send_flash_instrument(msg: Message, state: FSMContext) -> None:
 
     if current_answer:
         await msg.answer(text=current_answer)
-    instrument = instrument_provider.get_random_task()
-    await state.update_data(answer=instrument.answer_label)
+    instrument_task = instrument_provider.get_random_task()
+    await state.update_data(answer=instrument_task.instrument)
 
     await msg.answer(
-        text=instrument.instrument,
+        text=instrument_task.purpose,
         reply_markup=Keyboard.flip()
     )
 

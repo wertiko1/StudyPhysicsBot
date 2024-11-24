@@ -31,8 +31,8 @@ def create_task_keyboard(tasks) -> ReplyKeyboardBuilder:
 async def start_exam_instrument(msg: Message, state: FSMContext):
     await state.set_state(InstrumentState.BEGIN_EXAM)
 
-    tasks = instrument_provider.generate_tasks()
-    answer_task: InstrumentTask = random.choice(tasks)
+    instrument_tasks = instrument_provider.generate_tasks()
+    answer_task: InstrumentTask = random.choice(instrument_tasks)
 
     await state.update_data(
         task=answer_task.purpose,
@@ -41,7 +41,7 @@ async def start_exam_instrument(msg: Message, state: FSMContext):
         count_correct=0,
     )
 
-    keyboard = create_task_keyboard(tasks)
+    keyboard = create_task_keyboard(instrument_tasks)
     await msg.answer(
         text=f"Какой прибор используется для:\n ● {answer_task.purpose}",
         reply_markup=keyboard.as_markup(resize_keyboard=True),
@@ -65,8 +65,8 @@ async def process_exam_instrument(msg: Message, state: FSMContext):
         await msg.answer("Неправильно. ❌")
         await update_task_count(msg.from_user.id, TaskType.INSTRUMENT)
 
-    tasks = instrument_provider.generate_tasks()
-    answer_task: InstrumentTask = random.choice(tasks)
+    instrument_tasks = instrument_provider.generate_tasks()
+    answer_task: InstrumentTask = random.choice(instrument_tasks)
 
     await state.update_data(
         task=answer_task.purpose,
@@ -75,7 +75,7 @@ async def process_exam_instrument(msg: Message, state: FSMContext):
         count_correct=count_correct,
     )
 
-    keyboard = create_task_keyboard(tasks)
+    keyboard = create_task_keyboard(instrument_tasks)
     await msg.answer(
         text=f"Какой прибор используется для:\n ● {answer_task.purpose}",
         reply_markup=keyboard.as_markup(resize_keyboard=True),
