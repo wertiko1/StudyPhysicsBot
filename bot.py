@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from src.utils.setup.logging import LogSetup
 from src.utils.setup.bot import BotSetup
 from src.utils.setup.commands import BotCommands
-from src.utils.setup.routers import Routers
+from src.utils.setup.routers import RoutersLoader
 from src.utils.setup.db import SetupData
 from configs.config_reader import Config
 from configs.settings import CacheSettings
@@ -14,7 +14,7 @@ async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     logger.info("Running startup tasks...")
     await db.get_db_client().startup()
     await db.get_redis_client().get_client()
-    await Routers().include_routers(dispatcher)
+    RoutersLoader(routers_path='src/handlers', dp=dispatcher).load()
     await bot.set_my_commands(
         BotCommands().get_commands_list()
     )

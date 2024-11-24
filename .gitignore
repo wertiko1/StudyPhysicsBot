@@ -9,11 +9,9 @@ __pycache__/
 venv/
 .venv/
 
-# Data
-*.sqlite3
-*.db
-db.sqlite3-wal
-db.sqlite3-shm
+# Logs
+logs/
+*.log
 
 # IDE
 .vscode/
