@@ -1,2 +1,1 @@
-from .diagram_map import ChartData, PieChart, Colors
-from .calendar_map import CalendarHeatmap
+from .stats_view import StatisticView

@@ -1,10 +1,12 @@
-import datetime
+import os
 import uuid
+import datetime
 import calendar
 from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
+from loguru import logger
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.colors import ListedColormap, ColorConverter
@@ -13,19 +15,11 @@ from pandas import Series, DatetimeIndex
 
 
 class CalendarHeatmap:
-    def __init__(self, title_template: str = "Total completed: {count}"):
-        """
-        Класс для генерации тепловых карт-календарей.
-
-        Параметры:
-            title_template (str):
-                Шаблон заголовка для тепловой карты.
-                Может содержать `{count}`, который заменится на сумму значений.
-        """
-        self.title_template = title_template
+    def __init__(self, title: str = "Total completed: {count}"):
+        self.title = title
 
     @staticmethod
-    def yearplot(
+    def _yearplot(
             data: Series,
             *,
             how: str | None = "sum",
@@ -42,9 +36,6 @@ class CalendarHeatmap:
             ax: Axes | None = None,
             **kwargs: Any,
     ) -> Axes:
-        """
-        Внутренний метод для построения тепловой карты за год.
-        """
         data = data.astype("int64")
         end_date = data.index.max() if not data.empty else pd.Timestamp.today()
         if mode == "last365":
@@ -140,34 +131,17 @@ class CalendarHeatmap:
     def generate(
             self, data: dict[datetime.datetime, int]
     ) -> str:
-        """
-        Генерирует тепловую карту-календарь и сохраняет ее в файл.
-
-        Параметры:
-            dbs (dict[datetime.datetime, int]):
-                Данные для построения тепловой карты (даты и значения).
-
-        Возвращает:
-            str: Путь к сохраненному изображению.
-        """
         series_data = pd.Series(data)
         series_data.index = pd.to_datetime(series_data.index)
 
         plt.figure(figsize=(7, 3))
 
-        self.yearplot(
-            series_data,
-            months={
-                1: "", 2: "", 3: "", 4: "", 5: "", 6: "",
-                7: "", 8: "", 9: "", 10: "", 11: "", 12: "",
-            },
-            days={
-                0: "Пн", 1: "", 2: "Ср", 3: "", 4: "Пт", 5: "", 6: "Вс",
-            },
-        )
-        plt.title(self.title_template.format(count=series_data.sum()))
+        self._yearplot(series_data, days={
+            0: "Пн", 1: "", 2: "Ср", 3: "", 4: "Пт", 5: "", 6: "Вс",
+        })
+        plt.title(self.title.format(count=series_data.sum()))
 
-        output_file_path = f"heatmap_{uuid.uuid4().hex}.png"
+        output_file_path = f"cache/heatmap_{uuid.uuid4().hex}.png"
         plt.savefig(output_file_path)
         plt.close()
 
@@ -182,7 +156,7 @@ if __name__ == "__main__":
         datetime.datetime(2024, 8, 3): 2,
     }
 
-    heatmap_generator = CalendarHeatmap(title_template="Выполнено задач: {count}")
+    heatmap_generator = CalendarHeatmap(title="Выполнено задач: {count}")
 
     heatmap_path = heatmap_generator.generate(example_data)
 
