@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "studyphysicsbot"
+version = "0.1.0"
+description = ""
+authors = ["wertiko1 <144675169+wertiko1@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.14.0"
+tortoise-orm = "^0.21.7"
+loguru = "^0.7.2"
+python-dotenv = "^1.0.1"
+redis = "^5.2.0"
+numpy = "^2.1.3"
+matplotlib = "^3.9.2"
+pandas = "^2.2.3"
+bs4 = "^0.0.2"
+pyppeteer = "^2.0.0"
+apscheduler = "^3.10.4"
+asyncpg = "^0.30.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
