@@ -20,6 +20,6 @@ async def stats(msg: Message) -> None:
         f" ● Правильно: {total_exams_valid}\n\n"
         f"Устный счет: {user_stats.math_tasks}\n"
         f" ● Правильно: {user_stats.valid_math_tasks}\n\n"
-        f"Это на {int(percent)}% лучше чем у других пользователей",
+        f"Это лучше чем у {int(percent)}% других пользователей",
         reply_markup=Keyboard.main()
     )
