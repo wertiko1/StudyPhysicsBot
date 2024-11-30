@@ -1,2 +1,2 @@
 from .keyboard import Keyboard
-from .messages import MessageManager
+from .message import MessageManager
