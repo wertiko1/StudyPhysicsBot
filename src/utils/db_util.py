@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from tortoise.exceptions import DoesNotExist
 from loguru import logger
+from tortoise.exceptions import DoesNotExist
 
 from src.models import User
 
@@ -18,6 +18,11 @@ class TaskStats:
     valid_formula_tasks: int
     math_tasks: int
     valid_math_tasks: int
+
+    @property
+    def sum_stats(self) -> int:
+        result = self.valid_theory_tasks + self.valid_math_tasks + self.valid_formula_tasks + self.valid_instrument_tasks
+        return result
 
 
 class TaskType(Enum):
@@ -121,17 +126,19 @@ async def get_user_task_percentile(user_id: int) -> Optional[float]:
         total_users = len(all_users)
 
         lower_task_count = sum(
-            1 for u in all_users if (
-                    u.instrument_tasks +
-                    u.valid_instrument_tasks +
-                    u.theory_tasks +
-                    u.valid_theory_tasks +
-                    u.formula_tasks +
-                    u.valid_formula_tasks +
-                    u.math_tasks +
-                    u.valid_math_tasks
+            1 for user in all_users if (
+                    user.instrument_tasks +
+                    user.valid_instrument_tasks +
+                    user.theory_tasks +
+                    user.valid_theory_tasks +
+                    user.formula_tasks +
+                    user.valid_formula_tasks +
+                    user.math_tasks +
+                    user.valid_math_tasks
             ) < user_task_count
         )
+
+        lower_task_count = 1 if not lower_task_count else lower_task_count
         percentile = (lower_task_count / total_users) * 100
         logger.info(f"User ID {user_id} is better than {percentile:.2f}% of users.")
         return percentile

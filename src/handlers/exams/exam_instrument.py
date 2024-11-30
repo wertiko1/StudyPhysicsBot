@@ -1,3 +1,5 @@
+import random
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (
@@ -11,8 +13,6 @@ from src.utils import Keyboard
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.states import MainState, InstrumentState
 from src.utils.tasks import InstrumentTaskProvider, InstrumentTask
-
-import random
 
 router = Router()
 instrument_provider = InstrumentTaskProvider()

@@ -2,10 +2,9 @@ from aiogram import Router, types
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
-from src.utils.states import MainState
-from src.utils.db_util import fetch_user, create_new_user
-
 from src.utils import Keyboard, MessageManager
+from src.utils.db_util import fetch_user, create_new_user
+from src.utils.states import MainState
 
 router = Router()
 

@@ -1,6 +1,7 @@
+import random
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.types import (
     Message,
     FSInputFile,
@@ -8,12 +9,12 @@ from aiogram.types import (
     ReplyKeyboardRemove,
     ReplyKeyboardMarkup
 )
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from src.utils import Keyboard
 from src.utils.db_util import TaskType, update_task_count
 from src.utils.states import MainState, FormularState
 from src.utils.tasks import FormulaTaskProvider
-import random
 
 router = Router()
 formula_provider = FormulaTaskProvider()

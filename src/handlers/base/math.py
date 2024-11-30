@@ -1,10 +1,11 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from src.utils.states import MainState, MathState
-from src.utils.db_util import TaskType, update_task_count
-from src.utils.tasks import MathTaskProvider
+
 from src.utils import Keyboard, MessageManager
+from src.utils.db_util import TaskType, update_task_count
+from src.utils.states import MainState, MathState
+from src.utils.tasks import MathTaskProvider
 
 router = Router()
 math_provider = MathTaskProvider()

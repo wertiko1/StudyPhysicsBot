@@ -2,8 +2,8 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from src.utils.states import MainState
 from src.utils import Keyboard, MessageManager
+from src.utils.states import MainState
 
 router = Router()
 

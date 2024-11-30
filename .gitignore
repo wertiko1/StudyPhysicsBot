@@ -10,9 +10,8 @@ venv/
 .venv/
 
 # Logs
-logs/
 *.log
 
 # IDE
 .vscode/
-.idea/
+*.idea/
