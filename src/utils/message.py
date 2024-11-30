@@ -1,5 +1,6 @@
-from aiogram.types import Message, ReplyKeyboardMarkup
 from typing import List
+
+from aiogram.types import Message, ReplyKeyboardMarkup
 
 
 class MessageObj:

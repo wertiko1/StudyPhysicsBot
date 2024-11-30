@@ -1,7 +1,2 @@
-from .forms import (
-    InstrumentState,
-    FormularState,
-    TheoryState,
-    MainState,
-    MathState
-)
+from .main import MainState
+from .task import TheoryState, InstrumentState, MathState, FormularState
