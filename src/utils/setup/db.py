@@ -1,6 +1,6 @@
-from .dbs.database import DataBase
-from .dbs.cache import RedisClient
 from configs.settings import CacheSettings
+from .dbs.cache import RedisClient
+from .dbs.database import DataBase
 
 
 class SetupData:

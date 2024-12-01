@@ -12,12 +12,10 @@ router = Router()
 async def stats(msg: Message) -> None:
     user_stats = await fetch_task_stats(msg.from_user.id)
     percent = await get_user_task_percentile(msg.from_user.id)
-    total_exams = user_stats.theory_tasks + user_stats.formula_tasks + user_stats.instrument_tasks
-    total_exams_valid = user_stats.valid_formula_tasks + user_stats.valid_instrument_tasks + user_stats.valid_theory_tasks
     await msg.answer(
         f"Статистика\n"
-        f"Всего тестов: {total_exams}\n"
-        f" ● Правильно: {total_exams_valid}\n\n"
+        f"Всего тестов: {user_stats.summary_stats}\n"
+        f" ● Правильно: {user_stats.summary_valid_stats}\n\n"
         f"Устный счет: {user_stats.math_tasks}\n"
         f" ● Правильно: {user_stats.valid_math_tasks}\n\n"
         f"Это лучше чем у {int(percent)}% других пользователей",

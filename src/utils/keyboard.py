@@ -1,5 +1,6 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from typing import List
+
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 def _create(buttons: List[List[str]], resize: bool = True, placeholder: str = None) -> ReplyKeyboardMarkup:

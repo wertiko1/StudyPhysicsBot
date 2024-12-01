@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
 from typing import List, Optional, Union
 
+import matplotlib.pyplot as plt
 from loguru import logger
+
 from configs.settings import Colors
 
 

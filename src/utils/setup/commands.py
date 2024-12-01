@@ -1,5 +1,6 @@
-from aiogram.types import BotCommand
 from typing import Tuple, List
+
+from aiogram.types import BotCommand
 
 
 class Command:

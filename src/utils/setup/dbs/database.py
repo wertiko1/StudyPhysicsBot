@@ -1,5 +1,6 @@
 from loguru import logger
 from tortoise import Tortoise
+
 from configs.config_reader import Config
 
 
