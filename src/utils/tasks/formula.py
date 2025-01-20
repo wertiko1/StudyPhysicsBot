@@ -25,7 +25,7 @@ class FormulaTaskProvider:
         description = random.choice(list(self.formulas.keys()))
         formula_image = self.formulas[description]
         elements_image = self.elements.get(description)
-        return FormulaTask(formula_image, description, elements_image)
+        return FormulaTask(formula_image, elements_image, description)
 
     def get_formula_task(self, description: str) -> FormulaTask:
         formula_image = self.formulas.get(description)

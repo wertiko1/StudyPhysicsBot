@@ -1,15 +1,15 @@
 from .dbs.database import DataBase
 from .dbs.cache import RedisClient
-from configs.settings import CacheSettings
+from src.settings.base import CacheSettings
 
 
 class SetupData:
     def __init__(self) -> None:
         self._db_client = DataBase()
         self._redis_client = RedisClient(
-            redis_url=CacheSettings.redis_url,
-            state_ttl=CacheSettings.state_ttl,
-            data_ttl=CacheSettings.data_ttl
+            redis_url=CacheSettings.REDIS_URL,
+            state_ttl=CacheSettings.STATE_TTL,
+            data_ttl=CacheSettings.DATA_TTL
         )
 
     def get_redis_client(self) -> RedisClient:

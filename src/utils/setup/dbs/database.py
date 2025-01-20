@@ -1,22 +1,21 @@
 from loguru import logger
 from tortoise import Tortoise
-from configs.config_reader import Config
+from src.settings import db
 
 
 class DataBase:
     def __init__(self) -> None:
-        self._db = Config.SQL_URL
+        pass
 
     async def startup(self) -> None:
         await Tortoise.init(
-            db_url=self._db,
+            db_url=db.url,
             modules={
-                'models': ['src.models']
+                'models': db.DB_MODELS
             }
         )
         await Tortoise.generate_schemas()
         logger.info('Database connected')
-
 
     async def shutdown(self) -> None:
         await Tortoise.close_connections()

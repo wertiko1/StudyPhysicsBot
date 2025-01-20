@@ -16,3 +16,6 @@ logs/
 # IDE
 .vscode/
 .idea/
+
+# Database
+db

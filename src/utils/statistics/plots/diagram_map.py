@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from typing import List, Optional, Union
 
 from loguru import logger
-from configs.settings import Colors
+from src.schemas import Colors
 
 
 class ColorPalette:
